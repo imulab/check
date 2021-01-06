@@ -1,14 +1,14 @@
-package is_test
+package expect_test
 
 import (
 	"context"
 	"github.com/imulab/check"
-	"github.com/imulab/check/is"
+	"github.com/imulab/check/expect"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestIsString(t *testing.T) {
+func TestExpectType_ToBeString(t *testing.T) {
 	testType(t, []typeTest{
 		{
 			name:   "string",
@@ -20,10 +20,10 @@ func TestIsString(t *testing.T) {
 			target: 123,
 			expect: false,
 		},
-	}, is.String)
+	}, expect.Type.ToBeString)
 }
 
-func TestIsInt64(t *testing.T) {
+func TestExpectType_ToBeInt64(t *testing.T) {
 	testType(t, []typeTest{
 		{
 			name:   "int64",
@@ -35,32 +35,17 @@ func TestIsInt64(t *testing.T) {
 			target: "foo",
 			expect: false,
 		},
-	}, is.Int64)
-}
-
-func TestIsBool(t *testing.T) {
-	testType(t, []typeTest{
-		{
-			name:   "bool",
-			target: true,
-			expect: true,
-		},
-		{
-			name:   "not a bool",
-			target: "foo",
-			expect: false,
-		},
-	}, is.Bool)
+	}, expect.Type.ToBeInt64)
 }
 
 func testType(t *testing.T, cases []typeTest, step check.Step) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			err := check.That(context.Background(), c.target, step)
+			err := check.That(context.Background(), c.target, step)()
 			if c.expect {
 				assert.NoError(t, err)
 			} else {
-				assert.Equal(t, is.ErrType, err)
+				assert.Error(t, err)
 			}
 		})
 	}

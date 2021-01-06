@@ -47,17 +47,32 @@ func (s Step) If(condition Step) Step {
 	}
 }
 
+// ErrFunc is a function that can return an error.
+type ErrFunc func() error
+
 // That is the entrypoint for performing the validation Step. All supplied validation Step are
-// performed sequentially unless an error is returned, or a Step returned Skip.
-func That(ctx context.Context, target interface{}, steps ...Step) error {
-	for _, s := range steps {
-		if err := s(ctx, target); err != nil {
-			switch err {
-			case Skip:
-				return nil
-			default:
-				return err
+// performed sequentially unless an error is returned, or a Step returned Skip. That is a Validation.
+func That(ctx context.Context, target interface{}, steps ...Step) ErrFunc {
+	return func() error {
+		for _, s := range steps {
+			if err := s(ctx, target); err != nil {
+				switch err {
+				case Skip:
+					return nil
+				default:
+					return err
+				}
 			}
+		}
+		return nil
+	}
+}
+
+// AnyErr is a convenient invoker to chain multiple ErrFunc returned by That together.
+func AnyErr(ef ...ErrFunc) error {
+	for _, it := range ef {
+		if err := it(); err != nil {
+			return err
 		}
 	}
 	return nil
