@@ -13,29 +13,31 @@ var (
 	ErrStringSliceLength   = errors.New("string slice does not have expected length")
 )
 
-var StringSlice = stringSliceExpect{}
-
-type stringSliceExpect struct{}
-
-func (_ stringSliceExpect) ToBeOptional(_ context.Context, target interface{}) error {
-	if len(target.([]string)) == 0 {
-		return check.Skip
-	}
-	return nil
+var StringSlice = stringSliceExpect{
+	ToBeOptional: check.Step(func(ctx context.Context, target interface{}) error {
+		if len(target.([]string)) == 0 {
+			return check.Skip
+		}
+		return nil
+	}),
+	ToBeEmpty: check.Step(func(ctx context.Context, target interface{}) error {
+		if len(target.([]string)) == 0 {
+			return nil
+		}
+		return ErrStringSliceNotEmpty
+	}),
+	ToBeNonEmpty: check.Step(func(ctx context.Context, target interface{}) error {
+		if len(target.([]string)) > 0 {
+			return nil
+		}
+		return ErrStringSliceEmpty
+	}),
 }
 
-func (_ stringSliceExpect) ToBeEmpty(_ context.Context, target interface{}) error {
-	if len(target.([]string)) == 0 {
-		return nil
-	}
-	return ErrStringSliceNotEmpty
-}
-
-func (_ stringSliceExpect) ToNotBeEmpty(_ context.Context, target interface{}) error {
-	if len(target.([]string)) > 0 {
-		return nil
-	}
-	return ErrStringSliceEmpty
+type stringSliceExpect struct {
+	ToBeOptional check.Step
+	ToBeEmpty    check.Step
+	ToBeNonEmpty check.Step
 }
 
 func (_ stringSliceExpect) ToHaveLength(length int) check.Step {
