@@ -45,10 +45,10 @@ func (_ stringExpect) ToBeNonEmpty(_ context.Context, target interface{}) error 
 	return ErrStringNotEmpty
 }
 
-func (_ stringExpect) ToHaveLengthBetween(include int, exclude int) Step {
+func (_ stringExpect) ToHaveLengthBetween(startInclusive int, endExclusive int) Step {
 	return func(ctx context.Context, target interface{}) error {
 		l := len(target.(string))
-		if include <= l && l < exclude {
+		if startInclusive <= l && l < endExclusive {
 			return nil
 		}
 		return ErrStringLength
