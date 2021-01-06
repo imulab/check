@@ -47,6 +47,18 @@ func (s Step) If(condition Step) Step {
 	}
 }
 
+func (s Step) When(another interface{}, condition Step) Step {
+	return func(ctx context.Context, target interface{}) error {
+		ce := condition(ctx, another)
+		switch ce {
+		case nil:
+			return s(ctx, target)
+		default:
+			return nil
+		}
+	}
+}
+
 // ErrFunc is a function that can return an error.
 type ErrFunc func() error
 
