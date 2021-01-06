@@ -57,6 +57,14 @@ func (_ stringSliceExpect) ToHaveLengthInRange(startInclusive int, endExclusive 
 	}
 }
 
+func (s stringSliceExpect) ToContain(value string) check.Step {
+	return s.Any(String.ToEqual(value))
+}
+
+func (s stringSliceExpect) ToNotContain(value string) check.Step {
+	return s.None(String.ToEqual(value))
+}
+
 func (_ stringSliceExpect) All(memberStep check.Step) check.Step {
 	return func(ctx context.Context, target interface{}) error {
 		for _, it := range target.([]string) {
@@ -88,5 +96,22 @@ func (_ stringSliceExpect) Any(memberStep check.Step) check.Step {
 			}
 		}
 		return ErrMemberCondition
+	}
+}
+
+func (_ stringSliceExpect) None(memberStep check.Step) check.Step {
+	return func(ctx context.Context, target interface{}) error {
+		for _, it := range target.([]string) {
+			err := memberStep(ctx, it)
+			switch err {
+			case nil:
+				return ErrMemberCondition
+			case check.Skip:
+				return check.Skip
+			default:
+				continue
+			}
+		}
+		return nil
 	}
 }
