@@ -17,15 +17,31 @@ var (
 // String is the entrypoint for checking strings. All check.Step
 // under here expects the target to be string. If caller is unsure
 // of the type, call Type.ToBeString first.
-var String = stringExpect{}
+var String = stringExpect{
+	ToBeOptional: check.Step(func(ctx context.Context, target interface{}) error {
+		if len(target.(string)) == 0 {
+			return check.Skip
+		}
+		return nil
+	}),
+	ToBeEmpty: check.Step(func(ctx context.Context, target interface{}) error {
+		if len(target.(string)) == 0 {
+			return nil
+		}
+		return ErrStringEmpty
+	}),
+	ToBeNonEmpty: check.Step(func(ctx context.Context, target interface{}) error {
+		if len(target.(string)) == 0 {
+			return nil
+		}
+		return ErrStringNotEmpty
+	}),
+}
 
-type stringExpect struct{}
-
-func (_ stringExpect) ToBeOptional(_ context.Context, target interface{}) error {
-	if len(target.(string)) == 0 {
-		return check.Skip
-	}
-	return nil
+type stringExpect struct {
+	ToBeOptional check.Step
+	ToBeEmpty    check.Step
+	ToBeNonEmpty check.Step
 }
 
 func (_ stringExpect) ToEqual(value string) check.Step {
@@ -46,20 +62,6 @@ func (_ stringExpect) ToHaveValueIn(values ...string) check.Step {
 		}
 		return ErrStringValue
 	}
-}
-
-func (_ stringExpect) ToBeEmpty(_ context.Context, target interface{}) error {
-	if len(target.(string)) == 0 {
-		return nil
-	}
-	return ErrStringEmpty
-}
-
-func (_ stringExpect) ToBeNonEmpty(_ context.Context, target interface{}) error {
-	if len(target.(string)) == 0 {
-		return nil
-	}
-	return ErrStringNotEmpty
 }
 
 func (_ stringExpect) ToHaveLengthBetween(startInclusive int, endExclusive int) check.Step {
