@@ -1,8 +1,9 @@
-package check_test
+package expect_test
 
 import (
 	"context"
 	"github.com/imulab/check"
+	"github.com/imulab/check/expect"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -19,7 +20,7 @@ func TestExpectType_ToBeString(t *testing.T) {
 			target: 123,
 			expect: false,
 		},
-	}, check.Type.ToBeString)
+	}, expect.Type.ToBeString)
 }
 
 func TestExpectType_ToBeInt64(t *testing.T) {
@@ -34,7 +35,7 @@ func TestExpectType_ToBeInt64(t *testing.T) {
 			target: "foo",
 			expect: false,
 		},
-	}, check.Type.ToBeInt64)
+	}, expect.Type.ToBeInt64)
 }
 
 func testType(t *testing.T, cases []typeTest, step check.Step) {
