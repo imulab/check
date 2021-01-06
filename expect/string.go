@@ -28,6 +28,15 @@ func (_ stringExpect) ToBeOptional(_ context.Context, target interface{}) error 
 	return nil
 }
 
+func (_ stringExpect) ToEqual(value string) check.Step {
+	return func(_ context.Context, target interface{}) error {
+		if target.(string) == value {
+			return nil
+		}
+		return ErrStringValue
+	}
+}
+
 func (_ stringExpect) ToHaveValueIn(values ...string) check.Step {
 	return func(_ context.Context, target interface{}) error {
 		for _, it := range values {
