@@ -46,6 +46,19 @@ func (s Step) If(obj interface{}, condition Step) Step {
 	}
 }
 
+// When is like If, but applies the condition on the target itself.
+func (s Step) When(condition Step) Step {
+	return func(target interface{}) error {
+		return s.If(target, condition)(target)
+	}
+}
+
+// Optional is a Step that unconditionally emits Skip signal. It is useful to be
+// combined with Step.If, or Step.When.
+var Optional Step = func(_ interface{}) error {
+	return Skip
+}
+
 // ErrFunc is a function that can return an error.
 type ErrFunc func() error
 
