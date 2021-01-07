@@ -1,7 +1,6 @@
 package check
 
 import (
-	"context"
 	"errors"
 )
 
@@ -17,12 +16,12 @@ var (
 // A special case is Skip, return Skip is returned, the remaining Step is skipped and
 // the validation run is treated as successful. Implementations are recommended to
 // return a single documented error.
-type Step func(ctx context.Context, target interface{}) error
+type Step func(target interface{}) error
 
 // Err creates a new Step which returns the supplied error in case of failure.
 func (s Step) Err(err error) Step {
-	return func(ctx context.Context, target interface{}) error {
-		se := s(ctx, target)
+	return func(target interface{}) error {
+		se := s(target)
 		switch se {
 		case nil:
 			return nil
@@ -35,24 +34,12 @@ func (s Step) Err(err error) Step {
 }
 
 // If creates a new Step which executes this Step only when the condition Step returns nil.
-func (s Step) If(condition Step) Step {
-	return func(ctx context.Context, target interface{}) error {
-		ce := condition(ctx, target)
+func (s Step) If(obj interface{}, condition Step) Step {
+	return func(target interface{}) error {
+		ce := condition(obj)
 		switch ce {
 		case nil:
-			return s(ctx, target)
-		default:
-			return nil
-		}
-	}
-}
-
-func (s Step) When(another interface{}, condition Step) Step {
-	return func(ctx context.Context, target interface{}) error {
-		ce := condition(ctx, another)
-		switch ce {
-		case nil:
-			return s(ctx, target)
+			return s(target)
 		default:
 			return nil
 		}
@@ -64,10 +51,10 @@ type ErrFunc func() error
 
 // That is the entrypoint for performing the validation Step. All supplied validation Step are
 // performed sequentially unless an error is returned, or a Step returned Skip. That is a Validation.
-func That(ctx context.Context, target interface{}, steps ...Step) ErrFunc {
+func That(target interface{}, steps ...Step) ErrFunc {
 	return func() error {
 		for _, s := range steps {
-			if err := s(ctx, target); err != nil {
+			if err := s(target); err != nil {
 				switch err {
 				case Skip:
 					return nil
