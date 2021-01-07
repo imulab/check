@@ -49,6 +49,17 @@ func (s Step) If(obj interface{}, condition Step) Step {
 // ErrFunc is a function that can return an error.
 type ErrFunc func() error
 
+// Err returns a wrapper ErrFunc to replace any returned error with the given error.
+func (f ErrFunc) Err(err error) ErrFunc {
+	return func() error {
+		fe := f()
+		if fe == nil {
+			return nil
+		}
+		return err
+	}
+}
+
 // That is the entrypoint for performing the validation Step. All supplied validation Step are
 // performed sequentially unless an error is returned, or a Step returned Skip. That is a Validation.
 func That(target interface{}, steps ...Step) ErrFunc {
