@@ -9,6 +9,7 @@ import (
 
 var (
 	ErrIs               = errors.New("unexpected string error")
+	ErrIsNot            = errors.New("unexpected string error")
 	ErrIsEmpty          = errors.New("string is not empty")
 	ErrIsNotEmpty       = errors.New("string is empty")
 	ErrIn               = errors.New("string value not among expected values")
@@ -27,6 +28,16 @@ func Is(expect string) check.Step {
 			return nil
 		}
 		return ErrIs
+	}
+}
+
+// IsNot returns check.Step to verify target string is not the unexpected value, or return ErrIsNot.
+func IsNot(unexpected string) check.Step {
+	return func(target interface{}) error {
+		if target.(string) != unexpected {
+			return nil
+		}
+		return ErrIsNot
 	}
 }
 

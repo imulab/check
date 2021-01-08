@@ -31,6 +31,29 @@ func TestIs(t *testing.T) {
 	}
 }
 
+func TestIsNot(t *testing.T) {
+	cases := []struct {
+		name       string
+		target     string
+		unexpected string
+		err        error
+	}{
+		{name: "foo != foo", target: "foo", unexpected: "bar"},
+		{name: "foo == foo", target: "foo", unexpected: "foo", err: stringz.ErrIsNot},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			err := check.That(c.target, stringz.IsNot(c.unexpected))()
+			if c.err != nil {
+				assert.Equal(t, c.err, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestIsEmpty(t *testing.T) {
 	cases := []struct {
 		name   string
