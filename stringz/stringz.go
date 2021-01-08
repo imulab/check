@@ -113,7 +113,7 @@ func Contains(substring string) check.Step {
 
 // Matches returns check.Step that verifies the target string matches the given regular expression pattern, or
 // returns ErrMatches.
-func Matches(pattern regexp.Regexp) check.Step {
+func Matches(pattern *regexp.Regexp) check.Step {
 	return func(target interface{}) error {
 		if pattern.MatchString(target.(string)) {
 			return nil
