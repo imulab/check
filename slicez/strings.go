@@ -54,12 +54,12 @@ func (_ stringTyped) HasLengthInRange(startInclusive int, endExclusive int) chec
 
 // Contains returns check.Step that verifies the target string slice contains the expected element, or returns ErrContains.
 func (s stringTyped) Contains(value string) check.Step {
-	return s.Any(stringz.Is(value))
+	return s.Any(stringz.Is(value)).Err(ErrContains)
 }
 
 // NotContains returns check.Step that verifies the target string slice does not contain the element, or returns ErrNotContains.
-func (s stringTyped) NotContains(value string) check.Step {
-	return s.None(stringz.Is(value))
+func (s stringTyped) NotContain(value string) check.Step {
+	return s.None(stringz.Is(value)).Err(ErrNotContain)
 }
 
 // All checks all string slice elements conform to the condition of the element check.Step. If an element check.Step
