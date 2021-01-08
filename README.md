@@ -1,5 +1,10 @@
 # check
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/imulab/check)](https://goreportcard.com/report/github.com/imulab/check)
+[![Version](https://img.shields.io/badge/version-v0.1.0-green)](https://img.shields.io/badge/version-v0.1.0-green)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://img.shields.io/badge/license-MIT-blue)
+[![Go Reference](https://pkg.go.dev/badge/github.com/imulab/check.svg)](https://pkg.go.dev/github.com/imulab/check)
+
 functional, fluent and extensible validation toolkit for Go.
 
 __This library is under active development, feature PRs are welcomed__
