@@ -31,7 +31,7 @@ type stringTyped struct {
 }
 
 // HasLength returns check.Step that verifies the given string slice has the expected length, or returns ErrHasLength.
-func (_ stringTyped) HasLength(length int) check.Step {
+func (stringTyped) HasLength(length int) check.Step {
 	return func(target interface{}) error {
 		if len(target.([]string)) == length {
 			return nil
@@ -42,7 +42,7 @@ func (_ stringTyped) HasLength(length int) check.Step {
 
 // HasLengthInRange returns check.Step that verifies the given string slice has the length in the
 // expected range, or returns HasLengthInRange.
-func (_ stringTyped) HasLengthInRange(startInclusive int, endExclusive int) check.Step {
+func (stringTyped) HasLengthInRange(startInclusive int, endExclusive int) check.Step {
 	return func(target interface{}) error {
 		length := len(target.([]string))
 		if startInclusive <= length && length < endExclusive {
@@ -64,7 +64,7 @@ func (s stringTyped) NotContain(value string) check.Step {
 
 // All checks all string slice elements conform to the condition of the element check.Step. If an element check.Step
 // returns an error, it is returned as the error. The element check.Step is NOT recommended to use check.Skip.
-func (_ stringTyped) All(elemStep check.Step) check.Step {
+func (stringTyped) All(elemStep check.Step) check.Step {
 	return func(target interface{}) error {
 		for _, it := range target.([]string) {
 			if err := elemStep(it); err != nil {
@@ -77,7 +77,7 @@ func (_ stringTyped) All(elemStep check.Step) check.Step {
 
 // Any checks if any string slice elements conform to the condition of the element check.Step. If all element
 // check.Step returned error, ErrAny is returned.
-func (_ stringTyped) Any(elemStep check.Step) check.Step {
+func (stringTyped) Any(elemStep check.Step) check.Step {
 	return func(target interface{}) error {
 		for _, it := range target.([]string) {
 			if err := elemStep(it); err == nil {
@@ -90,7 +90,7 @@ func (_ stringTyped) Any(elemStep check.Step) check.Step {
 
 // None checks if none string slice elements conform to the condition of the element check.Step. If any element
 // check.Step returned nil, ErrNone is returned.
-func (_ stringTyped) None(elemStep check.Step) check.Step {
+func (stringTyped) None(elemStep check.Step) check.Step {
 	return func(target interface{}) error {
 		for _, it := range target.([]string) {
 			if err := elemStep(it); err == nil {

@@ -1,4 +1,4 @@
-// slicez contains check.Step implementation related to slices.
+// Package slicez contains check.Step implementation related to slices.
 //
 // Particular element types are grouped under a namespace. For instance.
 //
