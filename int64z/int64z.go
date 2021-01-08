@@ -7,6 +7,7 @@ import (
 
 var (
 	ErrEquals               = errors.New("int64 value does not equal to expected value")
+	ErrNotEqual             = errors.New("int64 value equals unexpected value")
 	ErrInRange              = errors.New("int64 value is not in range")
 	ErrGreaterThan          = errors.New("int64 value is not greater than expected value")
 	ErrLessThan             = errors.New("int64 value is not ")
@@ -34,6 +35,16 @@ func Equals(expected int64) check.Step {
 			return nil
 		}
 		return ErrEquals
+	}
+}
+
+// NotEqual returns a check.Step to check inequality to target to the value, or returns ErrNotEqual.
+func NotEqual(unexpected int64) check.Step {
+	return func(target interface{}) error {
+		if unexpected != target.(int64) {
+			return nil
+		}
+		return ErrNotEqual
 	}
 }
 
